@@ -9,18 +9,17 @@
     <body>
         <div class="container" x-data="dadosConversor">
             <h1 class="titulo">Conversor de Binário para Decimal</h1>
-            <template x-if="conversor.erros.length > 0">
+            <template x-if="conversor.erros !== null">
                 <div class="erros">
-                    <ul x-for="erro in conversor.erros">
-                       <li x-text="erro"></li>
+                    <ul >
+                       <li x-text="conversor.erros"></li>
                     </ul>
                 </div>
             </template>
             <form class="formulario">
                 <div class="form-control">
                     <label>Binário: </label>
-                    <input type="number" placeholder="Binário" x-model="conversor.binario.value" x-on:keyup.debounce.250ms="converter" />
-                    <span x-text="conversor.binario.erro" class="erro" x-text="erro"></span>
+                    <input type="text" placeholder="Binário" x-model="conversor.binario.value" x-on:keyup="converter" />
                 </div>
                 <div class="form-control">
                     <label>Decimal: </label>
@@ -39,23 +38,22 @@
      function inicializarAlpine() {
         document.addEventListener('alpine:init', () => {
         Alpine.data('dadosConversor', () => ({
-                conversor:  {binario: {value: '', erro: ''}, decimal: '', erros: []},
+                conversor:  {binario: {value: '', erro: ''}, decimal: '', erros: null},
                 resetar() {
-                    this.conversor = {binario: {value: '', erro: ''}, decimal: '', erros: []}
+                    this.conversor = {binario: {value: '', erro: ''}, decimal: '', erros: null}
                 },
                 async converter(event) {
                     _resetBasico(this.conversor);
                     converter(event, this.conversor);
                 },
                 init() {
-                    this.conversor = {binario: {value: '', erro: ''}, decimal: '', erros: []};
+                    this.conversor = {binario: {value: '', erro: ''}, decimal: '', erros: null};
                 }
            }));
         });
     }
 
     function _resetBasico(conversor) {
-        conversor.erros = [];
         conversor.binario.erro = '';
         conversor.decimal = '';
     }
@@ -63,25 +61,20 @@
     function converter(event, conversor) {
         try {
             let valor = event.target.value;
-            let possuiValor = valor.length > 0;
-            if(!possuiValor) return;
-            
-            let somenteBinarios =  _validarSePossuiSomenteBinarios(valor);
+            let binarios = valor.replace(/(?![0-1]).*/g, "");
+
+            let somenteBinarios =  binarios.length === valor.length;
             if(!somenteBinarios) 
-                conversor.binario.erro = 'Os números digitados devem ser entre 0 e 1';
-            else 
-                conversor.decimal = _converterBinarioParaDecimal(valor);
-        } catch {
-            console.log("Erro");
-            conversor.erros.push('Desculpe! Algo deu errado ao calcular, tente novamente mais tarde.');
+               conversor.erros = 'Os números digitados devem ser entre 0 e 1';
+
+            event.target.value = binarios
+            conversor.decimal = _converterBinarioParaDecimal(binarios);
+        } catch(ex) {
+            console.log(ex);
+            conversor.erros = 'Desculpe! Algo deu errado ao calcular, tente novamente mais tarde.';
         }
     }
 
-    function _validarSePossuiSomenteBinarios(valor) {
-       let binarios = _obterArrayDeNumerosBinarios(valor);
-       let somenteBinarios = valor.length === binarios.length
-       return somenteBinarios;
-    }
 
     function _converterBinarioParaDecimal(valor) {
         let binarios = _obterArrayDeNumerosBinarios(valor);

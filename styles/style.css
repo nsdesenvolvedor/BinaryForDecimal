@@ -25,14 +25,14 @@ body {
 
 .erros {
     list-style-position: inside;
-    background-color: rgb(236, 92, 92);
+    background-color: #fe3873;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 25px;
     padding-bottom: 25px;
     min-width: 400px;
     margin-top: 25px;
-    color: rgb(102, 9, 9);
+    color: rgb(255, 255, 255);
     border-radius: 4px;
 }
 
@@ -67,13 +67,6 @@ body {
     outline: none;
     box-shadow: 0px 0px 7px 1px #fe3873;
     transition: 0.5s;
-}
-
-.form-control .erro {
-    color: #fe3873;
-    max-width: 200px;
-    display: block;
-    margin-top: 7px;
 }
 
 .formulario button {
